@@ -1,5 +1,5 @@
 import os, sys
-from classes import Process, CPU_burst
+from classes import Process, CPU_burst, Event
 
 def process_burst(cpu_burst, cpu_free):
     if cpu_free == True and cpu_burst.cpu_time != 0:
@@ -184,6 +184,86 @@ def SJF_non_preemptive (process_list):
         process.calc_time_finished()
         print(f"Process {process.process_index} finished at time {process.time_finished}.")
         print(process)
+
+def fcfs_process_burst(process_and_burst, event_time, event_queue):
+    process = process_and_burst[0]
+    burst = process_and_burst[1]
+
+    burst.execution_starts = event_time
+    cpu_time = burst.cpu_time
+    io_time = burst.io_time
+    burst.end_time = event_time + cpu_time + io_time
+    event_time = burst.execution_starts + burst.cpu_time
+    
+    burst_counter = 0
+
+    event_queue.append(Event(burst.arrival_time, process, process.state, 'ready'))
+    event_queue.append(Event(burst.execution_starts, process, process.state, 'running'))
+
+    for cpu_burst in process.cpu_bursts:
+        if cpu_burst is burst and burst_counter < len(process.cpu_bursts) - 1:
+            process.cpu_bursts[burst_counter+1].arrival_time = burst.end_time
+            event_queue.append(Event(burst.execution_starts + cpu_time, process, process.state, 'blocked'))
+        elif cpu_burst is burst:
+            event_queue.append(Event(burst.execution_starts + cpu_time, process, process.state, 'terminated'))
+
+        burst_counter += 1
+
+    burst.cpu_time = 0
+    burst.io_time = 0
+    burst.is_empty = 1
+    
+    print(burst)
+    return event_time
+
+def event_based_FCFS(process_list):
+    event_queue = []
+    event_time = 0
+    cpu_free = True
+    all_bursts_empty = 0
+    max_arrival_time = max([process.arrival_time for process in process_list])
+    min_arrival_time = min([process.arrival_time for process in process_list])
+    event_time = min_arrival_time
+
+    cpu_idle_time = 0
+
+    for process in process_list:
+        process.cpu_bursts[0].arrival_time = process.arrival_time
+
+    while not all_bursts_empty:
+        processes_to_consider = []
+        processes_to_consider = process_list
+        process_and_valid_burst_list = []
+        
+        for process in processes_to_consider:
+            valid_burst = process.find_valid_cpu_burst(event_time)
+            if valid_burst:
+                process_and_burst = (process, process.find_valid_cpu_burst(event_time))
+                process_and_valid_burst_list.append(process_and_burst)
+
+        sorted_process_and_valid_burst_list = sorted(process_and_valid_burst_list, key=lambda x: x[1].arrival_time)
+        next_arrival_time = sorted_process_and_valid_burst_list[0][1].arrival_time
+
+        if event_time >= next_arrival_time:
+            event_time = fcfs_process_burst(sorted_process_and_valid_burst_list[0], event_time, event_queue)
+        else:
+            cpu_idle_time += next_arrival_time - event_time
+            event_time = next_arrival_time
+
+        #print(f"Total time left at least: {max([process.calc_total_time_left() for process in process_list])}")
+        if max([process.calc_total_time_left() for process in process_list]) <= 0:
+            all_bursts_empty = 1
+            print(f"All bursts have been processed at time: {event_time}")
+
+    burst_process_list = [(burst, process) for process in process_list for burst in process.cpu_bursts]
+    sorted_burst_process_list = sorted(burst_process_list, key=lambda x:x[0].execution_starts)
+
+    for i in sorted_burst_process_list:
+        print(f"Process: {i[1].process_index}, {i[0]}\n")
+    
+    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
+    for i in sorted_event_queue:
+        print(i)
 
 def FCFS (process_list):
     event_queue = []

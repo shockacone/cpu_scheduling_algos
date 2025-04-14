@@ -53,9 +53,9 @@ def main():
         #print(proc)
         pass
 
-    #algorithms.FCFS(process_list)
+    algorithms.event_based_FCFS(process_list)
     #algorithms.SJF_non_preemptive(process_list)
-    algorithms.SJF_preemptive(process_list)
+    #algorithms.SJF_preemptive(process_list)
 
 if __name__ == "__main__":
     main()
