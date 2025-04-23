@@ -10,7 +10,7 @@ class CPU_burst:
         self.is_waiting = False
         self.total_waiting = 0
         self.time_finished = -1
-        self.execution_starts = 0
+        self.execution_starts = -1 
         self.arrival_time = -1
         self.end_time = 0
 
@@ -66,9 +66,11 @@ class Process:
         for burst_counter in range(len(self.cpu_bursts)):
             if burst_counter == 0:
                 if self.cpu_bursts[burst_counter].cpu_time > 0 and self.cpu_bursts[burst_counter].arrival_time != -1:
+                    #and (not check_arrival or self.cpu_bursts[burst_counter].arrival_time >= event_time):
                     return self.cpu_bursts[burst_counter]
             else:
                 if self.cpu_bursts[burst_counter].cpu_time > 0 and self.cpu_bursts[burst_counter].arrival_time != -1 and self.cpu_bursts[burst_counter - 1].cpu_time == 0 and self.cpu_bursts[burst_counter - 1].io_time == 0:
+                    #and (not check_arrival or self.cpu_bursts[burst_counter].arrival_time >= event_time):
                     #and self.cpu_bursts[burst_counter - 1].end_time < event_time:
                     return self.cpu_bursts[burst_counter]
 
@@ -78,8 +80,8 @@ class Process:
 
     def __repr__(self):
         return (f"Process(index={self.process_index}, arrival={self.arrival_time}, "
-                f"bursts={self.cpu_burst_num}, cpu_bursts={self.cpu_bursts}), "
-                f"total_cpu_time={self.cpu_burst_combined_time}")
+                f"bursts={self.cpu_burst_num}, cpu_bursts={self.cpu_bursts}, "
+                f"total_cpu_time={self.cpu_burst_combined_time})")
 
 class Event:
 
