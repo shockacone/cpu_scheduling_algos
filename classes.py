@@ -25,12 +25,23 @@ class Process:
         self.cpu_bursts = []
         self.service_time = 0
         self.cpu_burst_combined_time = 0
-        #self.io_time = 0
+        self.total_io_time = 0
         self.io_wait = False
         self.turnaround_time = 0
         self.time_finished = 0 
         self.is_empty = 0
         self.state = 'new'
+
+    def calc_service_time(self):
+        for i in self.cpu_bursts:
+            self.service_time += i.cpu_time
+
+    def calc_IO_time(self):
+        for i in self.cpu_bursts:
+            self.total_io_time +=i.io_time
+
+    def calc_turnaround_time(self):
+        self.turnaround_time = self.time_finished - self.arrival_time
 
     def add_cpu_burst(self, cpu_burst: CPU_burst):
         if len(self.cpu_bursts) >= self.cpu_burst_num:
@@ -39,8 +50,8 @@ class Process:
 
     def calc_time_finished(self):
         for burst in self.cpu_bursts:
-            if self.time_finished <= burst.time_finished:
-                self.time_finished = burst.time_finished
+            if self.time_finished <= burst.end_time:
+                self.time_finished = burst.end_time
     
     def calc_total_cpu_time(self):
         self.cpu_burst_combined_time = 0

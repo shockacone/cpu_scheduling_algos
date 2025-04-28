@@ -7,6 +7,7 @@ def return_process_list(input_file):
     process_list = []
     first_line = 0
     process_line_count = 0
+    context_switch = 0
 
     with open(input_file, 'r') as file:
         for line in file:
@@ -37,10 +38,11 @@ def return_process_list(input_file):
 
             elif first_line == 0 and len(re.split(' ', line)) == 2:
                 #print("This is the first line. It includes the number of processes and the time for a process switch.")
+                context_switch = int(re.split(' ', line)[1])
                 first_line += 1
 
             else:
                 print("Unrecognized first line of input file!! The first line must provide ONLY 'number_of_processes' and 'process_switch'. Exiting...")
                 sys.exit()
 
-    return process_list
+    return process_list, context_switch

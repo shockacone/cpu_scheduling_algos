@@ -1,5 +1,6 @@
 import os, sys
 from classes import Process, CPU_burst, Event
+import output_handler 
 
 def process_burst(cpu_burst, cpu_free):
     if cpu_free == True and cpu_burst.cpu_time != 0:
@@ -21,7 +22,7 @@ def process_burst(cpu_burst, cpu_free):
 
     return cpu_free
 
-def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_time, event_queue, process_list):
+def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_time, event_queue, process_list, context_switch):
 
     #So we will get the process and the burst
     #We will need to compare the differences in cpu_times between valid bursts
@@ -35,6 +36,21 @@ def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_
     cpu_time = burst.cpu_time
     io_time = burst.io_time
 
+    #Is there a context switch? Look for previous event and see if a different process was in 'running' or 'terminated' state
+    previous_running_event = False
+    switching_context = False
+
+    for i in event_queue:
+        #find the most recent event for which there was a process in the running state
+        if i.previous_state == 'running':
+            previous_running_event = i     
+    
+    #if there was a different process that came out of the running state, there is a context switch
+    if previous_running_event:
+        if previous_running_event.process.process_index != process.process_index:
+            switching_context = True
+            event_time += context_switch
+
     if burst.execution_starts == -1:
         burst.execution_starts = event_time
     
@@ -45,6 +61,8 @@ def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_
             pass
         elif proc.state == 'running':
             event_queue.append(Event(event_time, proc, proc.state, 'ready'))
+            #There is a context switch here. Previous process is taken out of context
+            #Should I look at the previous event entry to figure out if a different process was running? Or go to the last event entry that has a process in the 'running' state (loop through events and check new_state). If the most recent event with 'new_state' = 'running has a process index associated with the event that is different than that which is currently entering, there is a context switch.
 
     next_arrived = 0
     cpu_remaining = 0
@@ -56,6 +74,7 @@ def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_
 
             if burst.execution_starts == event_time:
                 event_queue.append(Event(event_time, process, process.state, 'ready'))
+                #There may be a context switch here
 
             if process.state != 'running':
                 event_queue.append(Event(event_time, process, process.state, 'running'))
@@ -112,8 +131,118 @@ def preemptive_sjf_process_burst(shortest_and_arrived, event_time, next_arrival_
         return event_time
 
 
-def SJF_preemptive (process_list):
+def RR (process_list, argument_dict):
+    
+    alg_completion_time = 0
+    cpu_util = 0
+    event_queue = []
+    event_time = 0
+    cpu_free = True
+    all_bursts_empty = 0
+    max_arrival_time = max([process.arrival_time for process in process_list])
+    min_arrival_time = min([process.arrival_time for process in process_list])
+    event_time = min_arrival_time
 
+    if argument_dict['time_quantum']:
+        time_quantum = argument_dict['time_quantum']
+    else:
+        time_quantum = 10
+    
+    next_event_time = min_arrival_time
+    cpu_idle_time = min_arrival_time 
+
+    processes_to_consider = []
+    processes_to_consider = process_list
+    
+    for i in processes_to_consider:
+        i.calc_service_time()
+        i.calc_IO_time()
+
+    for process in processes_to_consider:
+        process.cpu_bursts[0].arrival_time = process.arrival_time
+
+    while not all_bursts_empty:
+        #tmp_processes_left = [(p,p.find_valid_cpu_burst(event_time)) for p in processes_to_consider]
+        processes_and_bursts_left = []
+        not_arrived = []
+
+        event_processed = 0
+
+        for process in processes_to_consider:
+            process_burst = process.find_valid_cpu_burst(event_time)
+
+            p_and_b = (process, process_burst)
+
+            if process_burst != False:
+                if process_burst.arrival_time <= event_time:
+                    event_time = preemptive_sjf_process_burst(p_and_b, event_time, event_time + time_quantum, event_queue, processes_to_consider, argument_dict['context_switch'])
+                    event_processed = 1
+        
+        if event_processed == 0:
+            if max([process.calc_total_time_left() for process in processes_to_consider]) <= 0:
+                all_bursts_empty = 1
+                alg_completion_time = event_time
+                cpu_util = float(( alg_completion_time - cpu_idle_time ) / alg_completion_time) * 100
+            else:
+                '''
+                tmp_processes_left = [(p,p.find_valid_cpu_burst(event_time)) for p in processes_to_consider]
+                next_arrival = min([burst[1].arrival_time for burst in tmp_processes_left if burst[1] != False])
+                if next_arrival < (event_time + time_quantum):
+                    cpu_idle_time += next_arrival - event_time
+                    event_time = next_arrival
+                '''
+                cpu_idle_time += time_quantum
+                #next_event_time += event_time + time_quantum
+                event_time += time_quantum
+
+
+        '''
+
+        for i in tmp_processes_left:
+            if i[1] != False:
+                if i[1].arrival_time <= event_time:
+                    processes_and_bursts_left.append(i)
+                if i[1].arrival_time > event_time and i[1].arrival_time <= event_time + time_quantum:
+                    not_arrived.append(i)
+
+        if processes_and_bursts_left:
+            for p_and_b in processes_and_bursts_left:
+                next_event_time = event_time + time_quantum
+                event_time = preemptive_sjf_process_burst(p_and_b, event_time, next_event_time, event_queue, processes_to_consider, argument_dict['context_switch']) 
+        elif not_arrived:
+            cpu_idle_time += not_arrived[0][1].arrival_time - event_time
+            event_time = not_arrived[0][1].arrival_time
+        else:
+            if max([process.calc_total_time_left() for process in processes_to_consider]) <= 0:
+                all_bursts_empty = 1
+                alg_completion_time = event_time
+                cpu_util = float(( alg_completion_time - cpu_idle_time ) / alg_completion_time) * 100
+            else:
+                cpu_idle_time += time_quantum
+                next_event_time += event_time + time_quantum
+                event_time = next_event_time
+
+        '''
+    for i in processes_to_consider:
+        i.calc_time_finished()
+        i.calc_turnaround_time()
+        #i.calc_time_finished()
+
+    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
+
+    alg_name = f"Round Robin with Time Quantum {time_quantum}"
+    output_handler.default_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider, alg_name)
+    if argument_dict['detailed']:
+        output_handler.detailed_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+    if argument_dict['verbose']:
+        output_handler.verbose_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+
+
+def SJF_preemptive (process_list, argument_dict):
+
+
+    alg_completion_time = 0
+    cpu_util = 0
     event_queue = []
     event_time = 0
     cpu_free = True
@@ -124,12 +253,17 @@ def SJF_preemptive (process_list):
 
     cpu_idle_time = min_arrival_time 
 
-    for process in process_list:
+    processes_to_consider = []
+    processes_to_consider = process_list
+    
+    for i in processes_to_consider:
+        i.calc_service_time()
+        i.calc_IO_time()
+
+    for process in processes_to_consider:
         process.cpu_bursts[0].arrival_time = process.arrival_time
 
     while not all_bursts_empty:
-        processes_to_consider = []
-        processes_to_consider = process_list
         process_and_valid_burst_list = []
         
         for process in processes_to_consider:
@@ -162,7 +296,7 @@ def SJF_preemptive (process_list):
 
         #print(f"event_time = {event_time}, ", f"next_arrival = {next_arrival_time}, ", shortest_and_arrived[0][0].process_index, shortest_and_arrived[0][1])
         if shortest_and_arrived:
-            event_time = preemptive_sjf_process_burst(shortest_and_arrived[0], event_time, next_arrival_time, event_queue, process_list)
+            event_time = preemptive_sjf_process_burst(shortest_and_arrived[0], event_time, next_arrival_time, event_queue, processes_to_consider, argument_dict['context_switch'])
         else:
             if next_arrival_time != -1:
                 cpu_idle_time += next_arrival_time - event_time
@@ -171,30 +305,41 @@ def SJF_preemptive (process_list):
                 print("arrival_time is -1 and there is no process that is ready, something is wrong.")
                 sys.exit()
 
-        #print(event_time)
-        #print(f"Total time left at least: {max([process.calc_total_time_left() for process in process_list])}")
-        if max([process.calc_total_time_left() for process in process_list]) <= 0:
+        if max([process.calc_total_time_left() for process in processes_to_consider]) <= 0:
             all_bursts_empty = 1
-            time_finished = 0
-            for process in process_list:
-                if max([burst.end_time for burst in process.cpu_bursts]) > time_finished:
-                    time_finished = max([burst.end_time for burst in process.cpu_bursts])
-                    
-            print(f"All bursts have been processed at time: {time_finished}")
-            print(f"CPU idle time is: {cpu_idle_time}")
+            #time_finished = 0
+            alg_completion_time = event_time
+            cpu_util = float(( alg_completion_time - cpu_idle_time ) / alg_completion_time) * 100
 
-    burst_process_list = [(burst, process) for process in process_list for burst in process.cpu_bursts]
+            #for process in processes_to_consider:
+            #    if max([burst.end_time for burst in process.cpu_bursts]) > time_finished:
+            #        time_finished = max([burst.end_time for burst in process.cpu_bursts])
+                    
+            #print(f"All bursts have been processed at time: {time_finished}")
+            #print(f"CPU idle time is: {cpu_idle_time}")
+
+    burst_process_list = [(burst, process) for process in processes_to_consider for burst in process.cpu_bursts]
     sorted_burst_process_list = sorted(burst_process_list, key=lambda x:x[0].execution_starts)
 
-    #for i in sorted_burst_process_list:
-    #    print(f"Process: {i[1].process_index}, {i[0]}\n")
-    
     sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
-    for i in sorted_event_queue:
-        print(i)
+    for i in processes_to_consider:
+        i.calc_time_finished()
+        i.calc_turnaround_time()
+        #i.calc_time_finished()
 
-def SJF_non_preemptive (process_list):
+    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
+    alg_name = "Shortest Remaining Time Next"
+    output_handler.default_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider, alg_name)
+    if argument_dict['detailed']:
+        output_handler.detailed_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+    if argument_dict['verbose']:
+        output_handler.verbose_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
 
+def SJF_non_preemptive (process_list, argument_dict):
+
+
+    alg_completion_time = 0
+    cpu_util = 0
     event_queue = []
     event_time = 0
     cpu_free = True
@@ -205,12 +350,17 @@ def SJF_non_preemptive (process_list):
 
     cpu_idle_time = min_arrival_time 
 
-    for process in process_list:
+    processes_to_consider = []
+    processes_to_consider = process_list
+
+    for i in processes_to_consider:
+        i.calc_service_time()
+        i.calc_IO_time()
+
+    for process in processes_to_consider:
         process.cpu_bursts[0].arrival_time = process.arrival_time
 
     while not all_bursts_empty:
-        processes_to_consider = []
-        processes_to_consider = process_list
         process_and_valid_burst_list = []
         
         for process in processes_to_consider:
@@ -241,29 +391,56 @@ def SJF_non_preemptive (process_list):
                     break
 
         if shortest_and_arrived:
-            event_time = non_preemptive_process_burst(shortest_and_arrived[0], event_time, event_queue)
+            event_time = non_preemptive_process_burst(shortest_and_arrived[0], event_time, event_queue, argument_dict['context_switch'])
         else:
             cpu_idle_time += next_arrival_time - event_time
             event_time = next_arrival_time
 
-        #print(f"Total time left at least: {max([process.calc_total_time_left() for process in process_list])}")
-        if max([process.calc_total_time_left() for process in process_list]) <= 0:
+        if max([process.calc_total_time_left() for process in processes_to_consider]) <= 0:
             all_bursts_empty = 1
-            print(f"All bursts have been processed at time: {event_time}")
+            alg_completion_time = event_time
+            cpu_util = float(( alg_completion_time - cpu_idle_time ) / alg_completion_time) * 100
+            #print(f"All bursts have been processed at time: {event_time}")
 
-    burst_process_list = [(burst, process) for process in process_list for burst in process.cpu_bursts]
+    burst_process_list = [(burst, process) for process in processes_to_consider for burst in process.cpu_bursts]
     sorted_burst_process_list = sorted(burst_process_list, key=lambda x:x[0].execution_starts)
 
-    for i in sorted_burst_process_list:
-        print(f"Process: {i[1].process_index}, {i[0]}\n")
     
     sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
-    for i in sorted_event_queue:
-        print(i)
 
-def non_preemptive_process_burst(process_and_burst, event_time, event_queue):
+    for i in processes_to_consider:
+        i.calc_time_finished()
+        i.calc_turnaround_time()
+        #i.calc_time_finished()
+
+    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
+
+    alg_name = "Shortest Job First"
+    output_handler.default_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider, alg_name)
+    if argument_dict['detailed']:
+        output_handler.detailed_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+    if argument_dict['verbose']:
+        output_handler.verbose_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+
+
+def non_preemptive_process_burst(process_and_burst, event_time, event_queue, context_switch):
     process = process_and_burst[0]
     burst = process_and_burst[1]
+
+    #Is there a context switch? Look for previous event and see if a different process was in 'running' or 'terminated' state
+    previous_running_event = False
+    switching_context = False
+
+    for i in event_queue:
+        #find the most recent event for which there was a process in the running state
+        if i.previous_state == 'running':
+            previous_running_event = i     
+    
+    #if there was a different process that came out of the running state, there is a context switch
+    if previous_running_event:
+        if previous_running_event.process.process_index != process.process_index:
+            switching_context = True
+            event_time += context_switch
 
     burst.execution_starts = event_time
     cpu_time = burst.cpu_time
@@ -289,26 +466,34 @@ def non_preemptive_process_burst(process_and_burst, event_time, event_queue):
     burst.io_time = 0
     burst.is_empty = 1
     
-    print(burst)
+    #print(burst)
     return event_time
 
-def event_based_FCFS(process_list):
+def event_based_FCFS(process_list, argument_dict):
+
+    processes_to_consider = []
+    processes_to_consider = process_list
+
+    alg_completion_time = 0
+    cpu_util = 0
     event_queue = []
     event_time = 0
     cpu_free = True
     all_bursts_empty = 0
-    max_arrival_time = max([process.arrival_time for process in process_list])
-    min_arrival_time = min([process.arrival_time for process in process_list])
+    max_arrival_time = max([process.arrival_time for process in processes_to_consider])
+    min_arrival_time = min([process.arrival_time for process in processes_to_consider])
     event_time = min_arrival_time
 
     cpu_idle_time = 0
 
-    for process in process_list:
+    for i in processes_to_consider:
+        i.calc_service_time()
+        i.calc_IO_time()
+    
+    for process in processes_to_consider:
         process.cpu_bursts[0].arrival_time = process.arrival_time
 
     while not all_bursts_empty:
-        processes_to_consider = []
-        processes_to_consider = process_list
         process_and_valid_burst_list = []
         
         for process in processes_to_consider:
@@ -321,26 +506,35 @@ def event_based_FCFS(process_list):
         next_arrival_time = sorted_process_and_valid_burst_list[0][1].arrival_time
 
         if event_time >= next_arrival_time:
-            event_time = non_preemptive_process_burst(sorted_process_and_valid_burst_list[0], event_time, event_queue)
+            event_time = non_preemptive_process_burst(sorted_process_and_valid_burst_list[0], event_time, event_queue, argument_dict['context_switch'])
         else:
             cpu_idle_time += next_arrival_time - event_time
             event_time = next_arrival_time
 
-        #print(f"Total time left at least: {max([process.calc_total_time_left() for process in process_list])}")
-        if max([process.calc_total_time_left() for process in process_list]) <= 0:
+        if max([process.calc_total_time_left() for process in processes_to_consider]) <= 0:
             all_bursts_empty = 1
-            print(f"All bursts have been processed at time: {event_time}")
+            alg_completion_time = event_time
+            cpu_util = float(( alg_completion_time - cpu_idle_time ) / alg_completion_time) * 100
+            #print(f"All bursts have been processed at time: {event_time}")
 
-    burst_process_list = [(burst, process) for process in process_list for burst in process.cpu_bursts]
+    burst_process_list = [(burst, process) for process in processes_to_consider for burst in process.cpu_bursts]
     sorted_burst_process_list = sorted(burst_process_list, key=lambda x:x[0].execution_starts)
 
-    for i in sorted_burst_process_list:
-        print(f"Process: {i[1].process_index}, {i[0]}\n")
-    
-    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
-    for i in sorted_event_queue:
-        print(i)
+    for i in processes_to_consider:
+        i.calc_time_finished()
+        i.calc_turnaround_time()
+        #i.calc_time_finished()
 
+    sorted_event_queue = sorted(event_queue, key = lambda x:x.event_time)
+
+    alg_name = "First Come First Serve"
+    output_handler.default_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider, alg_name)
+    if argument_dict['detailed']:
+        output_handler.detailed_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+    if argument_dict['verbose']:
+        output_handler.verbose_mode(sorted_event_queue, alg_completion_time, cpu_util, processes_to_consider)
+
+'''
 def FCFS (process_list):
     event_queue = []
     event = 0
@@ -392,4 +586,4 @@ def FCFS (process_list):
         print(f"Process {process.process_index} finished at time {process.time_finished}.")
         print(process)
 
-
+'''
