@@ -1,0 +1,305 @@
+
+First Come First Serve:
+Total Time required is: 271954 units
+CPU Utilization is 98.99284437809335%
+
+Process 1
+Arrival time: 51
+Service time: 5397 units
+I/O time: 11103 units
+Turnaround time: 252723 units
+Finish time: 252774 units
+Process 2
+Arrival time: 73
+Service time: 5062 units
+I/O time: 9643 units
+Turnaround time: 227982 units
+Finish time: 228055 units
+Process 3
+Arrival time: 96
+Service time: 4430 units
+I/O time: 7983 units
+Turnaround time: 194730 units
+Finish time: 194826 units
+Process 4
+Arrival time: 115
+Service time: 5558 units
+I/O time: 11656 units
+Turnaround time: 246574 units
+Finish time: 246689 units
+Process 5
+Arrival time: 172
+Service time: 3899 units
+I/O time: 6693 units
+Turnaround time: 171233 units
+Finish time: 171405 units
+Process 6
+Arrival time: 236
+Service time: 4613 units
+I/O time: 7267 units
+Turnaround time: 196797 units
+Finish time: 197033 units
+Process 7
+Arrival time: 341
+Service time: 6315 units
+I/O time: 11486 units
+Turnaround time: 244052 units
+Finish time: 244393 units
+Process 8
+Arrival time: 371
+Service time: 2370 units
+I/O time: 6035 units
+Turnaround time: 185468 units
+Finish time: 185839 units
+Process 9
+Arrival time: 378
+Service time: 6845 units
+I/O time: 12154 units
+Turnaround time: 262740 units
+Finish time: 263118 units
+Process 10
+Arrival time: 379
+Service time: 4289 units
+I/O time: 8481 units
+Turnaround time: 199716 units
+Finish time: 200095 units
+Process 11
+Arrival time: 442
+Service time: 6104 units
+I/O time: 10273 units
+Turnaround time: 250155 units
+Finish time: 250597 units
+Process 12
+Arrival time: 461
+Service time: 5271 units
+I/O time: 12213 units
+Turnaround time: 254355 units
+Finish time: 254816 units
+Process 13
+Arrival time: 461
+Service time: 5124 units
+I/O time: 10204 units
+Turnaround time: 245808 units
+Finish time: 246269 units
+Process 14
+Arrival time: 529
+Service time: 3694 units
+I/O time: 6414 units
+Turnaround time: 178018 units
+Finish time: 178547 units
+Process 15
+Arrival time: 708
+Service time: 7243 units
+I/O time: 15713 units
+Turnaround time: 260642 units
+Finish time: 261350 units
+Process 16
+Arrival time: 739
+Service time: 5221 units
+I/O time: 10425 units
+Turnaround time: 239746 units
+Finish time: 240485 units
+Process 17
+Arrival time: 758
+Service time: 3579 units
+I/O time: 7063 units
+Turnaround time: 165747 units
+Finish time: 166505 units
+Process 18
+Arrival time: 778
+Service time: 3952 units
+I/O time: 7751 units
+Turnaround time: 193309 units
+Finish time: 194087 units
+Process 19
+Arrival time: 804
+Service time: 5901 units
+I/O time: 10479 units
+Turnaround time: 245368 units
+Finish time: 246172 units
+Process 20
+Arrival time: 851
+Service time: 4913 units
+I/O time: 6184 units
+Turnaround time: 190537 units
+Finish time: 191388 units
+Process 21
+Arrival time: 1009
+Service time: 5392 units
+I/O time: 9602 units
+Turnaround time: 211420 units
+Finish time: 212429 units
+Process 22
+Arrival time: 1079
+Service time: 3923 units
+I/O time: 8231 units
+Turnaround time: 225931 units
+Finish time: 227010 units
+Process 23
+Arrival time: 1091
+Service time: 1896 units
+I/O time: 4110 units
+Turnaround time: 88714 units
+Finish time: 89805 units
+Process 24
+Arrival time: 1109
+Service time: 6019 units
+I/O time: 14612 units
+Turnaround time: 258958 units
+Finish time: 260067 units
+Process 25
+Arrival time: 1121
+Service time: 2726 units
+I/O time: 6809 units
+Turnaround time: 179379 units
+Finish time: 180500 units
+Process 26
+Arrival time: 1170
+Service time: 7164 units
+I/O time: 17261 units
+Turnaround time: 264348 units
+Finish time: 265518 units
+Process 27
+Arrival time: 1191
+Service time: 4656 units
+I/O time: 6356 units
+Turnaround time: 182696 units
+Finish time: 183887 units
+Process 28
+Arrival time: 1317
+Service time: 5961 units
+I/O time: 11408 units
+Turnaround time: 246460 units
+Finish time: 247777 units
+Process 29
+Arrival time: 1318
+Service time: 5649 units
+I/O time: 9161 units
+Turnaround time: 245716 units
+Finish time: 247034 units
+Process 30
+Arrival time: 1324
+Service time: 4564 units
+I/O time: 7882 units
+Turnaround time: 227260 units
+Finish time: 228584 units
+Process 31
+Arrival time: 1394
+Service time: 5016 units
+I/O time: 8749 units
+Turnaround time: 234371 units
+Finish time: 235765 units
+Process 32
+Arrival time: 1469
+Service time: 4381 units
+I/O time: 8295 units
+Turnaround time: 233546 units
+Finish time: 235015 units
+Process 33
+Arrival time: 1530
+Service time: 5260 units
+I/O time: 7610 units
+Turnaround time: 213445 units
+Finish time: 214975 units
+Process 34
+Arrival time: 1559
+Service time: 2875 units
+I/O time: 4975 units
+Turnaround time: 156350 units
+Finish time: 157909 units
+Process 35
+Arrival time: 1722
+Service time: 5906 units
+I/O time: 12562 units
+Turnaround time: 254913 units
+Finish time: 256635 units
+Process 36
+Arrival time: 1741
+Service time: 3685 units
+I/O time: 4934 units
+Turnaround time: 156854 units
+Finish time: 158595 units
+Process 37
+Arrival time: 1744
+Service time: 4659 units
+I/O time: 9415 units
+Turnaround time: 228275 units
+Finish time: 230019 units
+Process 38
+Arrival time: 1834
+Service time: 5530 units
+I/O time: 13769 units
+Turnaround time: 251868 units
+Finish time: 253702 units
+Process 39
+Arrival time: 1858
+Service time: 8235 units
+I/O time: 18500 units
+Turnaround time: 268270 units
+Finish time: 270128 units
+Process 40
+Arrival time: 1877
+Service time: 3682 units
+I/O time: 7194 units
+Turnaround time: 185412 units
+Finish time: 187289 units
+Process 41
+Arrival time: 1895
+Service time: 6120 units
+I/O time: 11301 units
+Turnaround time: 256664 units
+Finish time: 258559 units
+Process 42
+Arrival time: 2059
+Service time: 6111 units
+I/O time: 10423 units
+Turnaround time: 242657 units
+Finish time: 244716 units
+Process 43
+Arrival time: 2106
+Service time: 4232 units
+I/O time: 6100 units
+Turnaround time: 186492 units
+Finish time: 188598 units
+Process 44
+Arrival time: 2126
+Service time: 8289 units
+I/O time: 12865 units
+Turnaround time: 261874 units
+Finish time: 264000 units
+Process 45
+Arrival time: 2141
+Service time: 3761 units
+I/O time: 5940 units
+Turnaround time: 172884 units
+Finish time: 175025 units
+Process 46
+Arrival time: 2149
+Service time: 7646 units
+I/O time: 12304 units
+Turnaround time: 261167 units
+Finish time: 263316 units
+Process 47
+Arrival time: 2152
+Service time: 4856 units
+I/O time: 7519 units
+Turnaround time: 215581 units
+Finish time: 217733 units
+Process 48
+Arrival time: 2267
+Service time: 8685 units
+I/O time: 16729 units
+Turnaround time: 269686 units
+Finish time: 271953 units
+Process 49
+Arrival time: 2270
+Service time: 5327 units
+I/O time: 9288 units
+Turnaround time: 224694 units
+Finish time: 226964 units
+Process 50
+Arrival time: 2275
+Service time: 7258 units
+I/O time: 13977 units
+Turnaround time: 263789 units
+Finish time: 266064 units
