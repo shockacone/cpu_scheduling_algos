@@ -1,6 +1,7 @@
 import os
 import sys
 
+#here's the definition for a cpu burst
 class CPU_burst:
     def __init__(self, burst_index, cpu_time, io_time):
         self.burst_index = burst_index
@@ -17,6 +18,7 @@ class CPU_burst:
     def __repr__(self):
         return f"CPU_burst(index={self.burst_index}, cpu={self.cpu_time}, io={self.io_time}, arrived={self.arrival_time}, execution_start={self.execution_starts}, finished={self.end_time})"
 
+#definition for a process object
 class Process:
     def __init__(self, process_index, arrival_time, cpu_burst_num):
         self.process_index = process_index
@@ -43,16 +45,19 @@ class Process:
     def calc_turnaround_time(self):
         self.turnaround_time = self.time_finished - self.arrival_time
 
+    #method to add a cpu burst
     def add_cpu_burst(self, cpu_burst: CPU_burst):
         if len(self.cpu_bursts) >= self.cpu_burst_num:
             raise OverflowError("Buffer is full")
         self.cpu_bursts.append(cpu_burst)
 
+    #calculating when the process finished
     def calc_time_finished(self):
         for burst in self.cpu_bursts:
             if self.time_finished <= burst.end_time:
                 self.time_finished = burst.end_time
     
+    #calculating the combined cpu time of all bursts
     def calc_total_cpu_time(self):
         self.cpu_burst_combined_time = 0
         for burst in self.cpu_bursts:
@@ -60,6 +65,7 @@ class Process:
 
         return self.cpu_burst_combined_time
 
+    #a check which indicates if the process has finished yet (if it finished, this should return 0)
     def calc_total_time_left(self):
         total_time_left = 0
         for i in self.cpu_bursts:
@@ -70,6 +76,7 @@ class Process:
 
         return total_time_left
             
+    #finding a valid burst based on whether previous bursts have finished and marked this one as having an arrival time, etc.
     def find_valid_cpu_burst(self, event_time):
         not_blocked = 1
         valid_burst = self.cpu_bursts[0]
@@ -87,7 +94,6 @@ class Process:
 
         return False
 
-        #return self.cpu_bursts[len(self.cpu_bursts) - 1]
 
     def __repr__(self):
         return (f"Process(index={self.process_index}, arrival={self.arrival_time}, "

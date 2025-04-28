@@ -1,0 +1,109 @@
+
+Round Robin with Time Quantum 100:
+Total Time required is: 3168 units
+CPU Utilization is 84.21717171717171%
+
+Process 1
+Arrival time: 0
+Service time: 328 units
+I/O time: 1199 units
+Turnaround time: 1894 units
+Finish time: 1894 units
+Process 2
+Arrival time: 12
+Service time: 139 units
+I/O time: 274 units
+Turnaround time: 572 units
+Finish time: 584 units
+Process 3
+Arrival time: 27
+Service time: 1842 units
+I/O time: 474 units
+Turnaround time: 3140 units
+Finish time: 3167 units
+Process 4
+Arrival time: 28
+Service time: 259 units
+I/O time: 599 units
+Turnaround time: 1296 units
+Finish time: 1324 units
+
+At time 0: Process 1 moves from new to ready
+At time 0: Process 1 moves from ready to running
+At time 15: Process 1 moves from running to blocked
+At time 20: Process 2 moves from new to ready
+At time 20: Process 2 moves from ready to running
+At time 24: Process 2 moves from running to blocked
+At time 129: Process 3 moves from new to ready
+At time 129: Process 3 moves from ready to running
+At time 133: Process 3 moves from running to blocked
+At time 138: Process 4 moves from new to ready
+At time 138: Process 4 moves from ready to running
+At time 175: Process 4 moves from running to blocked
+At time 180: Process 2 moves from blocked to ready
+At time 180: Process 2 moves from ready to running
+At time 210: Process 2 moves from running to blocked
+At time 310: Process 2 moves from blocked to ready
+At time 310: Process 2 moves from ready to running
+At time 400: Process 2 moves from running to blocked
+At time 405: Process 4 moves from blocked to ready
+At time 405: Process 4 moves from ready to running
+At time 442: Process 4 moves from running to blocked
+At time 447: Process 1 moves from blocked to ready
+At time 447: Process 1 moves from ready to running
+At time 465: Process 1 moves from running to blocked
+At time 570: Process 2 moves from blocked to ready
+At time 570: Process 2 moves from ready to running
+At time 584: Process 2 moves from running to terminated
+At time 590: Process 3 moves from blocked to running
+At time 690: Process 3 moves from running to ready
+At time 690: Process 4 moves from blocked to ready
+At time 690: Process 4 moves from ready to running
+At time 727: Process 4 moves from running to blocked
+At time 732: Process 1 moves from blocked to ready
+At time 732: Process 1 moves from ready to running
+At time 747: Process 1 moves from running to blocked
+At time 752: Process 3 moves from ready to running
+At time 852: Process 3 moves from running to ready
+At time 852: Process 4 moves from blocked to ready
+At time 852: Process 4 moves from ready to running
+At time 889: Process 4 moves from running to blocked
+At time 894: Process 1 moves from blocked to ready
+At time 894: Process 1 moves from ready to running
+At time 909: Process 1 moves from running to blocked
+At time 914: Process 3 moves from ready to running
+At time 1014: Process 3 moves from running to ready
+At time 1014: Process 4 moves from blocked to ready
+At time 1014: Process 4 moves from ready to running
+At time 1051: Process 4 moves from running to blocked
+At time 1056: Process 3 moves from ready to running
+At time 1151: Process 3 moves from running to ready
+At time 1151: Process 4 moves from blocked to ready
+At time 1151: Process 4 moves from ready to running
+At time 1188: Process 4 moves from running to blocked
+At time 1193: Process 3 moves from ready to running
+At time 1288: Process 3 moves from running to ready
+At time 1288: Process 4 moves from blocked to ready
+At time 1288: Process 4 moves from ready to running
+At time 1324: Process 4 moves from running to terminated
+At time 1330: Process 1 moves from blocked to ready
+At time 1330: Process 1 moves from ready to running
+At time 1355: Process 1 moves from running to blocked
+At time 1360: Process 3 moves from ready to running
+At time 1455: Process 3 moves from running to ready
+At time 1455: Process 1 moves from blocked to running
+At time 1555: Process 1 moves from running to ready
+At time 1555: Process 3 moves from ready to running
+At time 1655: Process 3 moves from running to ready
+At time 1655: Process 1 moves from ready to running
+At time 1755: Process 1 moves from running to ready
+At time 1755: Process 3 moves from ready to running
+At time 1855: Process 3 moves from running to ready
+At time 1855: Process 1 moves from ready to running
+At time 1894: Process 1 moves from running to terminated
+At time 1900: Process 3 moves from ready to running
+At time 1940: Process 3 moves from running to blocked
+At time 2040: Process 3 moves from blocked to running
+At time 2416: Process 3 moves from running to blocked
+At time 2516: Process 3 moves from blocked to running
+At time 3167: Process 3 moves from running to terminated
